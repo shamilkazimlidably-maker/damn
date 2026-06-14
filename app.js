@@ -1,1 +1,632 @@
-```js "use strict"; /* ========================================================= APP CONFIG Bütün linkləri və real lead endpoint-i burada dəyişin. ========================================================= */ const APP_CONFIG = { leadEndpoint: "", paymentUrl: "", scheduleUrl: "", whatsappNumber: "", instagram: "https://instagram.com/shamilkazimli.dably", tiktok: "https://tiktok.com/@shamilkazimli.dably", linkedin: "#", website: "https://conceptacademy.az", featuredOffer: "meta-video", videoReleaseDate: "", source: "shamil-kazimli-mobile-first-page" }; /* ========================================================= SERVICE CONFIGURATION Hər xidmət üçün modal mətni və dinamik suallar. ========================================================= */ const SERVICES = { general: { title: "Sənə uyğun təklifi seç", kicker: "ÜMUMİ MÜRACİƏT", description: "Əlaqə məlumatlarını daxil et, sənə uyğun proqram və ya xidməti birlikdə müəyyənləşdirək.", serviceLabel: "Ümumi müraciət", submitLabel: "Müraciəti göndər", paymentNote: "Formu göndərmək avtomatik ödəniş demək deyil.", fields: [ { type: "select", name: "selectedService", label: "Maraqlandığın təklif", required: true, options: [ ["", "Təklif seç"], ["4 aylıq SMM proqramı", "4 aylıq SMM proqramı"], [ "Meta Ads videokursu", "Meta Ads videokursu — 300 AZN ön satış" ], [ "Fərdi Strateji Sessiya", "Fərdi Strateji Sessiya — 250 AZN / 60 dəqiqə" ], ["Aylıq Meta xidməti", "Aylıq Meta xidməti"] ] } ] }, "smm-course": { title: "4 aylıq SMM proqramı", kicker: "CANLI PRAKTİKİ PROQRAM", description: "Paketini və hazırkı səviyyəni seç. Müraciətindən sonra proqram detalları paylaşılacaq.", serviceLabel: "4 aylıq SMM proqramı", submitLabel: "Proqrama müraciət et", paymentNote: "Formu göndərmək avtomatik ödəniş demək deyil.", fields: [ { type: "select", name: "coursePackage", label: "Paket", required: true, options: [ ["", "Paket seç"], [ "Standard", "Standard — 300 AZN/ay və ya 1,000 AZN birdəfəlik" ], ["Pro", "Pro — 500 AZN/ay və ya 1,500 AZN birdəfəlik"] ] }, { type: "select", name: "experienceLevel", label: "Hazırkı səviyyən", required: true, options: [ ["", "Səviyyə seç"], ["Sıfırdan başlayıram", "Sıfırdan başlayıram"], ["Junior SMM", "Junior SMM"], ["Freelancer", "Freelancer"], ["Biznes sahibiyəm", "Biznes sahibiyəm"] ] } ] }, "meta-video": { title: "Meta Ads videokursu", kicker: "300 AZN ÖN SATIŞ", description: "Normal satış qiyməti 600 AZN olacaq. Ön satış müraciətini tamamla.", serviceLabel: "Meta Ads videokursu — Ön satış — 300 AZN", submitLabel: "300 AZN-ə öncədən al", paymentNote: "Normal satış qiyməti 600 AZN olacaq. Formu göndərmək avtomatik ödəniş demək deyil.", fields: [ { type: "select", name: "paymentPreference", label: "Ödəniş üsulu", required: true, options: [ ["", "Ödəniş üsulu seç"], ["Kartla ödəniş", "Kartla ödəniş"], ["Bank köçürməsi", "Bank köçürməsi"], [ "WhatsApp-da dəqiqləşdirmək", "WhatsApp-da dəqiqləşdirmək" ] ] } ] }, "strategy-session": { title: "Fərdi Strateji Sessiya", kicker: "250 AZN · 60 DƏQİQƏ", description: "Layihənin əsas problemini və sessiyadan gözləntini paylaş.", serviceLabel: "Fərdi Strateji Sessiya — 250 AZN / 60 dəqiqə", submitLabel: "Sessiya üçün müraciət et", paymentNote: "Müraciət nəzərdən keçirildikdən sonra görüş və ödəniş detalları paylaşılacaq.", fields: [ { type: "url", name: "website", label: "Instagram və ya sayt linki", required: true, placeholder: "https://..." }, { type: "textarea", name: "mainProblem", label: "Hazırkı əsas problem", required: true, placeholder: "Əsas problemi qısa və konkret yaz." }, { type: "textarea", name: "expectation", label: "Sessiyadan gözləntin", required: true, placeholder: "Sessiyanın sonunda hansı qərarı vermək istəyirsən?" } ] }, "monthly-meta": { title: "Aylıq Meta xidməti", kicker: "REKLAM İDARƏETMƏSİ", description: "Biznesin və reklam büdcən haqqında qısa məlumat paylaş.", serviceLabel: "Aylıq Meta xidməti", submitLabel: "Meta xidməti üçün müraciət et", paymentNote: "Müraciət yoxlanıldıqdan sonra layihəyə uyğun fərdi təklif paylaşılacaq.", fields: [ { type: "text", name: "industry", label: "Fəaliyyət sahəsi", required: true, placeholder: "Məsələn: butik, kurs, klinika..." }, { type: "url", name: "website", label: "Instagram və ya sayt linki", required: true, placeholder: "https://..." }, { type: "select", name: "monthlyBudget", label: "Aylıq reklam büdcəsi", required: true, options: [ ["", "Büdcə aralığı seç"], ["0–500 AZN", "0–500 AZN"], ["500–1,500 AZN", "500–1,500 AZN"], ["1,500–5,000 AZN", "1,500–5,000 AZN"], ["5,000+ AZN", "5,000+ AZN"] ] }, { type: "textarea", name: "goal", label: "Əldə etmək istədiyin nəticə", required: true, placeholder: "Lead, satış, mesaj, qeydiyyat və s." } ] } }; const FEATURED_OFFERS = { "smm-course": { label: "Canlı proqram", title: "4 aylıq SMM proqramı", button: "Proqrama müraciət et" }, "meta-video": { label: "Ön satış", title: "Meta Ads videokursu", button: "300 AZN-ə al" }, "strategy-session": { label: "1:1 ekspert görüşü", title: "Fərdi Strateji Sessiya", button: "Sessiyaya yazıl" }, "monthly-meta": { label: "Reklam idarəetməsi", title: "Aylıq Meta xidməti", button: "Müraciət et" } }; const STEP_TITLES = { 1: "Əlaqə məlumatları", 2: "Uyğunluq detalları", 3: "Məlumatları təsdiqlə" }; const state = { currentStep: 1, activeService: "general", selectedPackage: "", lastFocusedElement: null, lastPayload: null }; /* ========================================================= DOM REFERENCES ========================================================= */ const elements = { desktopPhone: document.getElementById("desktopPhone"), qrCodeImage: document.getElementById("qrCodeImage"), copyPageLink: document.getElementById("copyPageLink"), offerList: document.getElementById("offerList"), featuredLabel: document.getElementById("featuredLabel"), stickyCta: document.getElementById("stickyCta"), stickyCtaLabel: document.getElementById("stickyCtaLabel"), stickyCtaTitle: document.getElementById("stickyCtaTitle"), stickyCtaButton: document.getElementById("stickyCtaButton"), videoReleaseText: document.getElementById("videoReleaseText"), modal: document.getElementById("leadModal"), sheet: document.querySelector(".lead-sheet"), modalKicker: document.getElementById("leadModalKicker"), modalTitle: document.getElementById("leadModalTitle"), modalDescription: document.getElementById("leadModalDescription"), stepCounter: document.getElementById("stepCounter"), stepTitle: document.getElementById("stepTitle"), leadForm: document.getElementById("leadForm"), serviceField: document.getElementById("serviceField"), packageField: document.getElementById("packageField"), nameField: document.getElementById("nameField"), phoneField: document.getElementById("phoneField"), emailField: document.getElementById("emailField"), noteField: document.getElementById("noteField"), dynamicFields: document.getElementById("dynamicFields"), formReview: document.getElementById("formReview"), consentField: document.getElementById("consentField"), consentError: document.querySelector(".consent-error"), paymentNote: document.getElementById("paymentNote"), submitButton: document.getElementById("submitButton"), submitLabel: document.querySelector(".submit-label"), formSuccess: document.getElementById("formSuccess"), successMessage: document.getElementById("successMessage"), successWhatsApp: document.getElementById("successWhatsApp"), successPayment: document.getElementById("successPayment"), currentYear: document.getElementById("currentYear"), toast: document.getElementById("toast") }; /* ========================================================= GENERIC HELPERS ========================================================= */ function qs(selector, parent = document) { return parent.querySelector(selector); } function qsa(selector, parent = document) { return [...parent.querySelectorAll(selector)]; } function clean(value) { return String(value ?? "").trim(); } function normalizePhone(value) { return String(value ?? "").replace(/[^\d+]/g, ""); } function isValidPhone(value) { return /^\+?\d{9,15}$/.test(normalizePhone(value)); } function isValidEmail(value) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); } function escapeHtml(value) { return String(value) .replaceAll("&", "&amp;") .replaceAll("<", "&lt;") .replaceAll(">", "&gt;") .replaceAll('"', "&quot;") .replaceAll("'", "&#039;"); } function showToast(message, isError = false) { if (!elements.toast) return; elements.toast.textContent = message; elements.toast.classList.toggle("is-error", isError); elements.toast.classList.add("is-visible"); clearTimeout(showToast.timer); showToast.timer = window.setTimeout(() => { elements.toast.classList.remove("is-visible"); }, 3400); } function getUtmData() { const params = new URLSearchParams(window.location.search); return { utmSource: params.get("utm_source") || "", utmMedium: params.get("utm_medium") || "", utmCampaign: params.get("utm_campaign") || "", utmContent: params.get("utm_content") || "", utmTerm: params.get("utm_term") || "" }; } function trackMeta(eventName, data = {}, custom = false) { if (typeof window.fbq !== "function") return; if (custom) { window.fbq("trackCustom", eventName, data); } else { window.fbq("track", eventName, data); } } function trackGA(eventName, data = {}) { if (typeof window.gtag === "function") { window.gtag("event", eventName, data); } } /* ========================================================= SOCIAL LINKS ========================================================= */ function initializeSocialLinks() { qsa(".js-social-link").forEach((link) => { const key = link.dataset.social; const url = APP_CONFIG[key]; if (!url || url === "#") { link.addEventListener("click", (event) => { event.preventDefault(); showToast("Bu keçidi APP_CONFIG daxilində əlavə et."); }); return; } link.href = url; link.target = "_blank"; link.rel = "noopener noreferrer"; }); } /* ========================================================= QR CODE AND COPY LINK ========================================================= */ function initializeQrCode() { if (!elements.qrCodeImage) return; const currentUrl = window.location.href; elements.qrCodeImage.src = "https://api.qrserver.com/v1/create-qr-code/" + `?size=320x320&margin=8&data=${encodeURIComponent(currentUrl)}`; } async function copyCurrentPageLink() { const url = window.location.href; try { await navigator.clipboard.writeText(url); showToast("Səhifə linki kopyalandı."); } catch { const input = document.createElement("textarea"); input.value = url; input.setAttribute("readonly", ""); input.style.position = "fixed"; input.style.opacity = "0"; document.body.appendChild(input); input.select(); document.execCommand("copy"); input.remove(); showToast("Səhifə linki kopyalandı."); } } /* ========================================================= FEATURED OFFER AND STICKY CTA ========================================================= */ function initializeFeaturedOffer() { const offerId = FEATURED_OFFERS[APP_CONFIG.featuredOffer] ? APP_CONFIG.featuredOffer : "meta-video"; const featuredCard = qs(`[data-offer-id="${offerId}"]`); if (featuredCard && elements.offerList) { featuredCard.classList.add("is-featured"); elements.offerList.prepend(featuredCard); } const featured = FEATURED_OFFERS[offerId]; if (elements.stickyCtaLabel) { elements.stickyCtaLabel.textContent = featured.label; } if (elements.stickyCtaTitle) { elements.stickyCtaTitle.textContent = featured.title; } if (elements.stickyCtaButton) { elements.stickyCtaButton.dataset.service = offerId; elements.stickyCtaButton.childNodes[0].nodeValue = `${featured.button} `; } } function initializeVideoReleaseDate() { if (!elements.videoReleaseText || !APP_CONFIG.videoReleaseDate) { return; } elements.videoReleaseText.textContent = `Planlaşdırılan yayım tarixi: ${APP_CONFIG.videoReleaseDate}. ` + "Ön satış alanlar ilk giriş hüququ əldə edəcək."; } /* ========================================================= DESKTOP PHONE TILT ========================================================= */ function initializeDesktopPhoneTilt() { const phone = elements.desktopPhone; if (!phone) return; const media = window.matchMedia( "(min-width: 901px) and (prefers-reduced-motion: no-preference)" ); function handleMove(event) { if (!media.matches) return; const rect = phone.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width - 0.5; const y = (event.clientY - rect.top) / rect.height - 0.5; phone.style.transform = `rotate(-5deg) ` + `rotateX(${y * -4}deg) ` + `rotateY(${x * 5}deg)`; } function resetTilt() { phone.style.transform = ""; } phone.addEventListener("pointermove", handleMove); phone.addEventListener("pointerleave", resetTilt); } /* ========================================================= LIGHT REVEAL ANIMATION ========================================================= */ function initializeRevealAnimation() { const items = qsa( ".offer-card, .why-grid article, .details-card, .faq-item" ); items.forEach((item) => { item.classList.add("reveal"); }); if (!("IntersectionObserver" in window)) { items.forEach((item) => { item.classList.add("is-visible"); }); return; } const observer = new IntersectionObserver( (entries) => { entries.forEach((entry) => { entry.target.classList.toggle( "is-visible", entry.isIntersecting ); }); }, { threshold: 0.1, rootMargin: "0px 0px -6% 0px" } ); items.forEach((item) => { observer.observe(item); }); } /* ========================================================= PACKAGE TABS ========================================================= */ function initializePackageTabs() { qsa("[data-package-tab]").forEach((button) => { button.addEventListener("click", () => { const packageName = button.dataset.packageTab; qsa("[data-package-tab]").forEach((tab) => { const isActive = tab === button; tab.classList.toggle("is-active", isActive); tab.setAttribute("aria-selected", String(isActive)); }); qsa("[data-package-panel]").forEach((panel) => { const isActive = panel.dataset.packagePanel === packageName; panel.classList.toggle("is-active", isActive); panel.hidden = !isActive; }); }); }); } /* ========================================================= FAQ AND DETAILS ACCORDIONS ========================================================= */ function initializeAccordions() { qsa(".faq-item").forEach((item) => { item.addEventListener("toggle", () => { if (!item.open) return; qsa(".faq-item").forEach((other) => { if (other !== item) { other.open = false; } }); }); }); } /* ========================================================= COMING SOON ========================================================= */ function initializeComingSoon() { qsa("[data-coming-soon]").forEach((button) => { button.addEventListener("click", () => { const productName = button.dataset.comingSoon; showToast("Sponsorluq müraciətləri hazırda açıq deyil."); trackMeta( "ComingSoonInterest", { product_name: productName }, true ); trackGA("coming_soon_interest", { product_name: productName }); }); }); } /* ========================================================= DYNAMIC FORM FIELDS ========================================================= */ function createDynamicField(config) { const wrapper = document.createElement("label"); wrapper.className = "form-field"; const label = document.createElement("span"); label.textContent = config.label; wrapper.appendChild(label); let input; if (config.type === "textarea") { input = document.createElement("textarea"); input.rows = 3; } else if (config.type === "select") { input = document.createElement("select"); config.options.forEach(([value, text]) => { const option = document.createElement("option"); option.value = value; option.textContent = text; input.appendChild(option); }); } else { input = document.createElement("input"); input.type = config.type || "text"; } input.name = config.name; input.dataset.dynamicField = "true"; if (config.placeholder) { input.placeholder = config.placeholder; } if (config.required) { input.required = true; } if ( state.activeService === "smm-course" && config.name === "coursePackage" && state.selectedPackage ) { input.value = state.selectedPackage; } const error = document.createElement("small"); error.className = "form-error"; input.addEventListener("input", () => { clearFieldError(input); saveDraft(); }); input.addEventListener("change", () => { clearFieldError(input); saveDraft(); }); wrapper.append(input, error); return wrapper; } function renderDynamicFields(serviceKey) { if (!elements.dynamicFields) return; const service = SERVICES[serviceKey] || SERVICES.general; elements.dynamicFields.innerHTML = ""; service.fields.forEach((field) => { elements.dynamicFields.appendChild( createDynamicField(field) ); }); } /* ========================================================= MODAL OPEN AND CLOSE ========================================================= */ function openLeadModal( serviceKey = "general", packageName = "" ) { const service = SERVICES[serviceKey] || SERVICES.general; state.activeService = SERVICES[serviceKey] ? serviceKey : "general"; state.selectedPackage = packageName || ""; state.currentStep = 1; state.lastFocusedElement = document.activeElement; elements.leadForm.reset(); elements.formSuccess.hidden = true; elements.leadForm.hidden = false; elements.modalKicker.textContent = service.kicker; elements.modalTitle.textContent = service.title; elements.modalDescription.textContent = service.description; elements.serviceField.value = service.serviceLabel; elements.packageField.value = state.selectedPackage; elements.submitLabel.textContent = service.submitLabel; elements.paymentNote.textContent = service.paymentNote; renderDynamicFields(state.activeService); restoreDraft(); updateStep(1); elements.modal.classList.add("is-open"); elements.modal.setAttribute( "aria-hidden", "false" ); document.body.classList.add("modal-open"); trackMeta( state.activeService === "meta-video" ? "PreSaleInterest" : "ServiceInterest", state.activeService === "meta-video" ? { product_name: "Meta Ads videokursu", value: 300, currency: "AZN" } : { service_name: service.serviceLabel }, true ); trackGA("select_service", { service_name: service.serviceLabel }); window.setTimeout(() => { elements.nameField?.focus(); }, 180); } function closeLeadModal() { elements.modal.classList.remove("is-open"); elements.modal.setAttribute( "aria-hidden", "true" ); document.body.classList.remove("modal-open"); clearAllErrors(); if ( state.lastFocusedElement instanceof HTMLElement ) { state.lastFocusedElement.focus(); } } /* ========================================================= FORM STEPS ========================================================= */ function updateStep(step) { state.currentStep = Math.max( 1, Math.min(3, step) ); qsa( "[data-step]", elements.leadForm ).forEach((panel) => { const active = Number(panel.dataset.step) === state.currentStep; panel.classList.toggle( "is-active", active ); panel.hidden = !active; }); qsa("[data-progress]").forEach((progress) => { const number = Number(progress.dataset.progress); progress.classList.toggle( "is-active", number === state.currentStep ); progress.classList.toggle( "is-complete", number < state.currentStep ); }); elements.stepCounter.textContent = `${state.currentStep} / 3`; elements.stepTitle.textContent = STEP_TITLES[state.currentStep]; if (state.currentStep === 3) { renderReview(); } elements.sheet.scrollTo({ top: 0, behavior: "smooth" }); } /* ========================================================= FORM VALIDATION ========================================================= */ function setFieldError(field, message) { field.classList.add("is-invalid"); const error = field .closest(".form-field") ?.querySelector(".form-error"); if (error) { error.textContent = message; } } function clearFieldError(field) { field.classList.remove("is-invalid"); const error = field .closest(".form-field") ?.querySelector(".form-error"); if (error) { error.textContent = ""; } } function clearAllErrors() { qsa( ".is-invalid", elements.leadForm ).forEach((field) => { field.classList.remove("is-invalid"); }); qsa( ".form-error", elements.leadForm ).forEach((error) => { error.textContent = ""; }); if (elements.consentError) { elements.consentError.textContent = ""; } } function validateField(field) { clearFieldError(field); const value = clean(field.value); if (field.required && !value) { setFieldError( field, "Bu sahə mütləqdir." ); return false; } if (!value) return true; if ( field.type === "tel" && !isValidPhone(value) ) { setFieldError( field, "Telefon nömrəsini düzgün yaz." ); return false; } if ( field.type === "email" && !isValidEmail(value) ) { setFieldError( field, "Email ünvanını düzgün yaz." ); return false; } if (field.type === "url") { try { new URL(value); } catch { setFieldError( field, "Linki https:// ilə birlikdə yaz." ); return false; } } if ( field.name === "name" && value.length < 3 ) { setFieldError( field, "Ad və soyadı düzgün yaz." ); return false; } return true; } function validateStep(step) { const panel = qs( `[data-step="${step}"]`, elements.leadForm ); if (!panel) return true; const fields = qsa( "input, textarea, select", panel ).filter((field) => { return ( field.type !== "hidden" && !field.disabled ); }); let valid = true; let firstInvalid = null; fields.forEach((field) => { const fieldValid = validateField(field); if (!fieldValid && !firstInvalid) { firstInvalid = field; } valid = fieldValid && valid; }); if (!valid && firstInvalid) { firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" }); window.setTimeout(() => { firstInvalid.focus(); }, 280); } return valid; } function validateConsent() { if (elements.consentField.checked) { elements.consentError.textContent = ""; return true; } elements.consentError.textContent = "Davam etmək üçün razılıq verməlisən."; return false; } /* ========================================================= FORM DRAFT PERSISTENCE ========================================================= */ function getDraftKey() { return `shamilLeadDraft:${state.activeService}`; } function saveDraft() { if (!elements.leadForm) return; const data = {}; new FormData( elements.leadForm ).forEach((value, key) => { data[key] = value; }); data.consent = elements.consentField.checked; try { sessionStorage.setItem( getDraftKey(), JSON.stringify(data) ); } catch { // Storage unavailable. } } function restoreDraft() { try { const raw = sessionStorage.getItem(getDraftKey()); if (!raw) return; const data = JSON.parse(raw); Object.entries(data).forEach( ([key, value]) => { if (key === "consent") { elements.consentField.checked = Boolean(value); return; } const field = elements.leadForm.elements.namedItem(key); if ( field && typeof field.value !== "undefined" ) { field.value = value; } } ); } catch { // Invalid or unavailable storage. } } function clearDraft() { try { sessionStorage.removeItem(getDraftKey()); } catch { // Ignore storage errors. } } /* ========================================================= PAYLOAD AND REVIEW ========================================================= */ function getPayload() { const formData = new FormData(elements.leadForm); const dynamic = {}; qsa( "[data-dynamic-field]", elements.leadForm ).forEach((field) => { dynamic[field.name] = clean(field.value); }); return { name: clean( formData.get("name") ), phone: normalizePhone( formData.get("phone") ), email: clean( formData.get("email") ).toLowerCase(), note: clean( formData.get("note") ), service: elements.serviceField.value, package: elements.packageField.value || dynamic.coursePackage || "", ...dynamic, source: APP_CONFIG.source, pageUrl: window.location.href, createdAt: new Date().toISOString(), ...getUtmData() }; } function renderReview() { const payload = getPayload(); const labels = { service: "Təklif", package: "Paket", name: "Ad və soyad", phone: "Telefon", email: "Email", selectedService: "Seçilən təklif", coursePackage: "Paket", experienceLevel: "Hazırkı səviyyə", paymentPreference: "Ödəniş üsulu", website: "Instagram / sayt", mainProblem: "Əsas problem", expectation: "Gözlənti", industry: "Fəaliyyət sahəsi", monthlyBudget: "Aylıq büdcə", goal: "Məqsəd", note: "Əlavə qeyd" }; const order = [ "service", "package", "name", "phone", "email", "selectedService", "coursePackage", "experienceLevel", "paymentPreference", "industry", "website", "monthlyBudget", "mainProblem", "expectation", "goal", "note" ]; elements.formReview.innerHTML = order .filter((key) => clean(payload[key])) .map((key) => { return ` <div class="review-row"> <span> ${escapeHtml(labels[key] || key)} </span> <strong> ${escapeHtml(payload[key])} </strong> </div> `; }) .join(""); } /* ========================================================= LEAD SUBMISSION ========================================================= */ function saveLeadLocally(payload) { const key = "shamilKazimliLeads"; try { const leads = JSON.parse( localStorage.getItem(key) || "[]" ); leads.push(payload); localStorage.setItem( key, JSON.stringify(leads) ); console.table(payload); } catch (error) { console.error( "Lead localStorage-da saxlanılmadı:", error ); } } async function sendLead(payload) { if (!APP_CONFIG.leadEndpoint) { saveLeadLocally(payload); return { ok: true, demo: true }; } const response = await fetch( APP_CONFIG.leadEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) } ); if (!response.ok) { throw new Error( `Endpoint ${response.status} statusu qaytardı.` ); } return { ok: true, demo: false }; } function buildWhatsAppUrl(payload) { if (!APP_CONFIG.whatsappNumber) { return ""; } const number = APP_CONFIG.whatsappNumber.replace( /\D/g, "" ); const message = `Salam, mən "${payload.service}" ilə bağlı müraciət etmişəm. ` + `Adım: ${payload.name}.`; return ( `https://wa.me/${number}` + `?text=${encodeURIComponent(message)}` ); } function showSuccess(payload, result) { elements.leadForm.hidden = true; elements.formSuccess.hidden = false; elements.successMessage.textContent = result.demo ? "Müraciət demo rejimində brauzerdə saxlanıldı. Real müraciətlər üçün APP_CONFIG.leadEndpoint əlavə et." : "Müraciətin qəbul edildi. Tezliklə səninlə əlaqə saxlanılacaq."; const whatsappUrl = buildWhatsAppUrl(payload); elements.successWhatsApp.hidden = !whatsappUrl; if (whatsappUrl) { elements.successWhatsApp.href = whatsappUrl; } const paymentAvailable = state.activeService === "meta-video" && Boolean(APP_CONFIG.paymentUrl); elements.successPayment.hidden = !paymentAvailable; if (paymentAvailable) { elements.successPayment.href = APP_CONFIG.paymentUrl; } elements.sheet.scrollTo({ top: 0, behavior: "smooth" }); } /* ========================================================= MODAL FOCUS TRAP ========================================================= */ function trapModalFocus(event) { if ( event.key !== "Tab" || !elements.modal.classList.contains("is-open") ) { return; } const focusable = qsa( [ "button:not([disabled])", "a[href]", "input:not([disabled])", "textarea:not([disabled])", "select:not([disabled])", '[tabindex]:not([tabindex="-1"])' ].join(","), elements.sheet ).filter((item) => { return item.offsetParent !== null; }); if (!focusable.length) return; const first = focusable[0]; const last = focusable[focusable.length - 1]; if ( event.shiftKey && document.activeElement === first ) { event.preventDefault(); last.focus(); } else if ( !event.shiftKey && document.activeElement === last ) { event.preventDefault(); first.focus(); } } /* ========================================================= EVENT BINDINGS ========================================================= */ function bindEvents() { qsa(".js-open-form").forEach((button) => { button.addEventListener("click", () => { openLeadModal( button.dataset.service || "general", button.dataset.package || "" ); }); }); qsa(".js-close-modal").forEach((button) => { button.addEventListener( "click", closeLeadModal ); }); qsa(".js-next-step").forEach((button) => { button.addEventListener("click", () => { if ( !validateStep(state.currentStep) ) { return; } saveDraft(); updateStep( state.currentStep + 1 ); }); }); qsa(".js-prev-step").forEach((button) => { button.addEventListener("click", () => { saveDraft(); updateStep( state.currentStep - 1 ); }); }); elements.leadForm.addEventListener( "input", (event) => { if ( event.target.matches( "input, textarea, select" ) ) { clearFieldError(event.target); saveDraft(); } } ); elements.consentField.addEventListener( "change", () => { elements.consentError.textContent = ""; saveDraft(); } ); elements.leadForm.addEventListener( "submit", async (event) => { event.preventDefault(); if ( !validateStep(3) || !validateConsent() ) { return; } const payload = getPayload(); state.lastPayload = payload; elements.submitButton.disabled = true; elements.submitButton.classList.add( "is-loading" ); try { const result = await sendLead(payload); trackMeta("Lead", { content_name: payload.service, content_category: "Personal Brand Lead Form" }); trackGA("generate_lead", { service_name: payload.service }); if ( state.activeService === "meta-video" ) { trackMeta("InitiateCheckout", { content_name: "Meta Ads videokursu", value: 300, currency: "AZN" }); trackGA("begin_checkout", { currency: "AZN", value: 300, items: [ { item_name: "Meta Ads videokursu", price: 300, quantity: 1 } ] }); } clearDraft(); showSuccess( payload, result ); showToast( "Müraciətin qəbul edildi." ); } catch (error) { console.error( "Lead göndərilərkən xəta:", error ); showToast( "Müraciəti göndərmək mümkün olmadı. Yenidən cəhd et.", true ); } finally { elements.submitButton.disabled = false; elements.submitButton.classList.remove( "is-loading" ); } } ); document.addEventListener( "keydown", (event) => { if ( event.key === "Escape" && elements.modal.classList.contains( "is-open" ) ) { closeLeadModal(); return; } trapModalFocus(event); } ); elements.copyPageLink?.addEventListener( "click", copyCurrentPageLink ); elements.successPayment?.addEventListener( "click", () => { trackMeta("InitiateCheckout", { content_name: "Meta Ads videokursu", value: 300, currency: "AZN" }); trackGA("begin_checkout", { currency: "AZN", value: 300 }); } ); } /* ========================================================= INITIALIZATION ========================================================= */ function initializeApp() { if (elements.currentYear) { elements.currentYear.textContent = String(new Date().getFullYear()); } initializeSocialLinks(); initializeQrCode(); initializeFeaturedOffer(); initializeVideoReleaseDate(); initializeDesktopPhoneTilt(); initializeRevealAnimation(); initializePackageTabs(); initializeAccordions(); initializeComingSoon(); bindEvents(); } document.addEventListener( "DOMContentLoaded", initializeApp ); ```
+"use strict";
+
+/**
+ * Concept Academy
+ * Main frontend interactions
+ */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const body = document.body;
+  const header = document.querySelector(".site-header");
+
+  const mobileMenu = document.querySelector(".mobile-menu");
+  const mobilePanel = document.querySelector(".mobile-panel");
+  const menuToggle = document.querySelector(".menu-toggle");
+  const mobileClose = document.querySelector(".mobile-close");
+  const mobileLinks = document.querySelectorAll(".mobile-links a");
+
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  let lastFocusedElement = null;
+
+  /**
+   * Mobile menu
+   */
+  function openMobileMenu() {
+    if (!mobileMenu) return;
+
+    lastFocusedElement = document.activeElement;
+
+    mobileMenu.classList.add("open");
+    mobileMenu.setAttribute("aria-hidden", "false");
+    menuToggle?.setAttribute("aria-expanded", "true");
+    body.classList.add("menu-open");
+
+    window.setTimeout(() => {
+      mobileClose?.focus();
+    }, 100);
+  }
+
+  function closeMobileMenu() {
+    if (!mobileMenu) return;
+
+    mobileMenu.classList.remove("open");
+    mobileMenu.setAttribute("aria-hidden", "true");
+    menuToggle?.setAttribute("aria-expanded", "false");
+    body.classList.remove("menu-open");
+
+    if (lastFocusedElement instanceof HTMLElement) {
+      lastFocusedElement.focus();
+    }
+  }
+
+  menuToggle?.setAttribute("aria-expanded", "false");
+  menuToggle?.setAttribute("aria-controls", "mobile-navigation");
+
+  if (mobileMenu) {
+    mobileMenu.id = "mobile-navigation";
+  }
+
+  menuToggle?.addEventListener("click", () => {
+    const isOpen = mobileMenu?.classList.contains("open");
+
+    if (isOpen) {
+      closeMobileMenu();
+    } else {
+      openMobileMenu();
+    }
+  });
+
+  mobileClose?.addEventListener("click", closeMobileMenu);
+
+  mobileLinks.forEach((link) => {
+    link.addEventListener("click", closeMobileMenu);
+  });
+
+  mobileMenu?.addEventListener("click", (event) => {
+    if (event.target === mobileMenu) {
+      closeMobileMenu();
+    }
+  });
+
+  /**
+   * Keyboard accessibility
+   */
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && mobileMenu?.classList.contains("open")) {
+      closeMobileMenu();
+    }
+
+    if (
+      event.key === "Tab" &&
+      mobileMenu?.classList.contains("open") &&
+      mobilePanel
+    ) {
+      trapFocus(event, mobilePanel);
+    }
+  });
+
+  function trapFocus(event, container) {
+    const focusableElements = container.querySelectorAll(
+      [
+        "a[href]",
+        "button:not([disabled])",
+        "input:not([disabled])",
+        "select:not([disabled])",
+        "textarea:not([disabled])",
+        '[tabindex]:not([tabindex="-1"])',
+      ].join(",")
+    );
+
+    if (!focusableElements.length) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
+
+  /**
+   * Smooth scrolling
+   */
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener("click", (event) => {
+      const href = link.getAttribute("href");
+
+      if (!href || href === "#") {
+        event.preventDefault();
+        showToast("Bu səhifə tezliklə aktiv olacaq.");
+        return;
+      }
+
+      const target = document.querySelector(href);
+
+      if (!target) {
+        event.preventDefault();
+
+        if (href === "#login") {
+          showToast("Daxil ol səhifəsi tezliklə əlavə olunacaq.");
+        } else if (href === "#signup") {
+          showToast("Hesab yaratma sistemi tezliklə aktiv olacaq.");
+        } else if (href === "#resources") {
+          showToast("Resurslar bölməsi hazırlanır.");
+        }
+
+        return;
+      }
+
+      event.preventDefault();
+
+      const headerHeight = header?.offsetHeight ?? 0;
+      const targetPosition =
+        target.getBoundingClientRect().top +
+        window.scrollY -
+        headerHeight -
+        18;
+
+      window.scrollTo({
+        top: targetPosition,
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+      });
+
+      if (history.pushState) {
+        history.pushState(null, "", href);
+      }
+    });
+  });
+
+  /**
+   * Header scroll state
+   */
+  function updateHeaderState() {
+    if (!header) return;
+
+    const isScrolled = window.scrollY > 20;
+
+    header.classList.toggle("is-scrolled", isScrolled);
+
+    header.style.boxShadow = isScrolled
+      ? "0 10px 35px rgba(16, 19, 18, 0.08)"
+      : "none";
+
+    header.style.borderBottomColor = isScrolled
+      ? "rgba(232, 228, 220, 1)"
+      : "rgba(232, 228, 220, 0.75)";
+  }
+
+  updateHeaderState();
+
+  window.addEventListener("scroll", updateHeaderState, {
+    passive: true,
+  });
+
+  /**
+   * Reveal animations
+   */
+  const revealElements = document.querySelectorAll(
+    [
+      ".hero-grid > *",
+      ".choice",
+      ".statement",
+      ".course-card",
+      ".system-box",
+      ".service-card",
+      ".workspace",
+      ".dash-card",
+    ].join(",")
+  );
+
+  if (!prefersReducedMotion && "IntersectionObserver" in window) {
+    revealElements.forEach((element) => {
+      element.style.opacity = "0";
+      element.style.transform = "translateY(22px)";
+    });
+
+    const revealObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const element = entry.target;
+          const siblings = Array.from(
+            element.parentElement?.children ?? []
+          );
+          const index = Math.max(siblings.indexOf(element), 0);
+          const delay = Math.min(index * 75, 300);
+
+          element.animate(
+            [
+              {
+                opacity: 0,
+                transform: "translateY(22px)",
+              },
+              {
+                opacity: 1,
+                transform: "translateY(0)",
+              },
+            ],
+            {
+              duration: 600,
+              delay,
+              easing: "cubic-bezier(.2, .75, .25, 1)",
+              fill: "forwards",
+            }
+          );
+
+          observer.unobserve(element);
+        });
+      },
+      {
+        threshold: 0.08,
+        rootMargin: "0px 0px -45px 0px",
+      }
+    );
+
+    revealElements.forEach((element) => {
+      revealObserver.observe(element);
+    });
+  } else {
+    revealElements.forEach((element) => {
+      element.style.opacity = "1";
+      element.style.transform = "none";
+    });
+  }
+
+  /**
+   * Active navigation item
+   */
+  const navigationLinks = document.querySelectorAll(
+    '.desktop-nav a[href^="#"], .mobile-links a[href^="#"]'
+  );
+
+  const navigationSections = Array.from(navigationLinks)
+    .map((link) => {
+      const selector = link.getAttribute("href");
+
+      if (!selector || selector === "#") return null;
+
+      return document.querySelector(selector);
+    })
+    .filter(Boolean);
+
+  if ("IntersectionObserver" in window && navigationSections.length) {
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        const visibleSections = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (!visibleSections.length) return;
+
+        const activeId = visibleSections[0].target.id;
+
+        navigationLinks.forEach((link) => {
+          const isActive =
+            link.getAttribute("href") === `#${activeId}`;
+
+          link.classList.toggle("active", isActive);
+
+          if (isActive) {
+            link.setAttribute("aria-current", "page");
+          } else {
+            link.removeAttribute("aria-current");
+          }
+        });
+      },
+      {
+        threshold: [0.15, 0.3, 0.5],
+        rootMargin: "-15% 0px -65% 0px",
+      }
+    );
+
+    navigationSections.forEach((section) => {
+      sectionObserver.observe(section);
+    });
+  }
+
+  /**
+   * Course progress animations
+   */
+  const progressBars = document.querySelectorAll(".bar span");
+
+  progressBars.forEach((bar) => {
+    const originalWidth = bar.style.width || "0%";
+    bar.dataset.targetWidth = originalWidth;
+
+    if (!prefersReducedMotion) {
+      bar.style.width = "0%";
+    }
+  });
+
+  if ("IntersectionObserver" in window && !prefersReducedMotion) {
+    const progressObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const bar = entry.target;
+          const targetWidth = bar.dataset.targetWidth || "0%";
+
+          requestAnimationFrame(() => {
+            bar.style.transition =
+              "width 900ms cubic-bezier(.2, .7, .2, 1)";
+            bar.style.width = targetWidth;
+          });
+
+          observer.unobserve(bar);
+        });
+      },
+      {
+        threshold: 0.4,
+      }
+    );
+
+    progressBars.forEach((bar) => {
+      progressObserver.observe(bar);
+    });
+  }
+
+  /**
+   * Progress ring animation
+   */
+  const progressRings = document.querySelectorAll(".progress-ring");
+
+  progressRings.forEach((ring) => {
+    const text = ring.querySelector("strong");
+    const finalValue = Number.parseInt(text?.textContent ?? "0", 10);
+
+    if (
+      Number.isNaN(finalValue) ||
+      prefersReducedMotion ||
+      !("IntersectionObserver" in window)
+    ) {
+      return;
+    }
+
+    ring.style.background =
+      "conic-gradient(var(--black) 0 0%, #eae8e2 0% 100%)";
+
+    if (text) {
+      text.textContent = "0%";
+    }
+
+    const ringObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          animateProgressRing(ring, text, finalValue);
+          observer.unobserve(ring);
+        });
+      },
+      {
+        threshold: 0.45,
+      }
+    );
+
+    ringObserver.observe(ring);
+  });
+
+  function animateProgressRing(ring, textElement, targetValue) {
+    const duration = 1100;
+    const startTime = performance.now();
+
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      const currentValue = Math.round(targetValue * easedProgress);
+
+      ring.style.background = `conic-gradient(
+        var(--black) 0 ${currentValue}%,
+        #eae8e2 ${currentValue}% 100%
+      )`;
+
+      if (textElement) {
+        textElement.textContent = `${currentValue}%`;
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  /**
+   * Spark chart animation
+   */
+  const sparkBars = document.querySelectorAll(".spark i");
+
+  sparkBars.forEach((bar) => {
+    const finalHeight = bar.style.height || "0%";
+    bar.dataset.finalHeight = finalHeight;
+
+    if (!prefersReducedMotion) {
+      bar.style.height = "0%";
+    }
+  });
+
+  if ("IntersectionObserver" in window && !prefersReducedMotion) {
+    const sparkObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const spark = entry.target;
+          const bars = spark.querySelectorAll("i");
+
+          bars.forEach((bar, index) => {
+            window.setTimeout(() => {
+              bar.style.transition =
+                "height 550ms cubic-bezier(.2, .7, .2, 1)";
+              bar.style.height = bar.dataset.finalHeight || "0%";
+            }, index * 70);
+          });
+
+          observer.unobserve(spark);
+        });
+      },
+      {
+        threshold: 0.4,
+      }
+    );
+
+    document.querySelectorAll(".spark").forEach((spark) => {
+      sparkObserver.observe(spark);
+    });
+  }
+
+  /**
+   * Slight hero movement on pointer
+   */
+  const heroArt = document.querySelector(".hero-art");
+  const heroImage = heroArt?.querySelector("img");
+
+  if (
+    heroArt &&
+    heroImage &&
+    !prefersReducedMotion &&
+    window.matchMedia("(pointer: fine)").matches
+  ) {
+    heroArt.addEventListener("pointermove", (event) => {
+      const bounds = heroArt.getBoundingClientRect();
+
+      const x =
+        (event.clientX - bounds.left) / bounds.width - 0.5;
+      const y =
+        (event.clientY - bounds.top) / bounds.height - 0.5;
+
+      heroImage.style.transform = `
+        translate3d(${x * 8}px, ${y * 8}px, 0)
+        rotateX(${y * -2}deg)
+        rotateY(${x * 2}deg)
+      `;
+    });
+
+    heroArt.addEventListener("pointerleave", () => {
+      heroImage.style.transition = "transform 400ms ease";
+      heroImage.style.transform =
+        "translate3d(0, 0, 0) rotateX(0) rotateY(0)";
+
+      window.setTimeout(() => {
+        heroImage.style.transition = "";
+      }, 400);
+    });
+  }
+
+  /**
+   * Button feedback and analytics
+   */
+  document.querySelectorAll(".btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      const label = button.textContent
+        ?.replace(/\s+/g, " ")
+        .trim();
+
+      trackEvent("cta_click", {
+        label: label || "unknown",
+        destination: button.getAttribute("href") || "",
+      });
+    });
+  });
+
+  function trackEvent(eventName, parameters = {}) {
+    // Google Analytics 4
+    if (typeof window.gtag === "function") {
+      window.gtag("event", eventName, parameters);
+    }
+
+    // Meta Pixel
+    if (typeof window.fbq === "function") {
+      const metaEventName =
+        eventName === "cta_click" ? "Lead" : eventName;
+
+      window.fbq("trackCustom", metaEventName, parameters);
+    }
+
+    // Development log
+    if (
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+    ) {
+      console.info(`[Analytics] ${eventName}`, parameters);
+    }
+  }
+
+  /**
+   * Toast notification
+   */
+  function showToast(message) {
+    const oldToast = document.querySelector(".concept-toast");
+
+    if (oldToast) {
+      oldToast.remove();
+    }
+
+    const toast = document.createElement("div");
+
+    toast.className = "concept-toast";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    toast.textContent = message;
+
+    Object.assign(toast.style, {
+      position: "fixed",
+      left: "50%",
+      bottom: "28px",
+      zIndex: "9999",
+      maxWidth: "calc(100% - 32px)",
+      padding: "13px 18px",
+      borderRadius: "12px",
+      background: "#101312",
+      color: "#ffffff",
+      fontSize: "14px",
+      fontWeight: "700",
+      lineHeight: "1.4",
+      textAlign: "center",
+      boxShadow: "0 16px 44px rgba(16, 19, 18, 0.22)",
+      transform: "translate(-50%, 18px)",
+      opacity: "0",
+      transition:
+        "opacity 220ms ease, transform 220ms ease",
+    });
+
+    body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.style.opacity = "1";
+      toast.style.transform = "translate(-50%, 0)";
+    });
+
+    window.setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transform = "translate(-50%, 18px)";
+
+      window.setTimeout(() => {
+        toast.remove();
+      }, 250);
+    }, 2800);
+  }
+
+  /**
+   * Update copyright year automatically
+   */
+  const footer = document.querySelector("footer");
+
+  if (footer) {
+    footer.innerHTML = footer.innerHTML.replace(
+      /©\s*\d{4}/,
+      `© ${new Date().getFullYear()}`
+    );
+  }
+
+  /**
+   * Prevent broken image icon
+   */
+  document.querySelectorAll("img").forEach((image) => {
+    image.addEventListener("error", () => {
+      image.style.display = "none";
+      image.parentElement?.classList.add("image-error");
+    });
+  });
+});
